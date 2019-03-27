@@ -5,7 +5,7 @@
     
     "autoload": {
         "psr-4": {
-            "Shameem\\": "bin/jslive/"
+            "ShameemReza\\": "bin/jslive/"
         }
     }
 }
