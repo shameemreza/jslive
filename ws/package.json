@@ -1,0 +1,26 @@
+{
+  "name": "shameem-jslivevideo",
+  "version": "0.0.15",
+  "description": "Node.js push server with web sockets",
+  "main": "script.js",
+  "scripts": {
+    "start": "node script.js"
+  },
+  "dependencies": {
+    "ws": "^6.1.2",
+    "express": "^4.16.4",
+    "https": "^1.0.0",
+    "fs": "latest"
+  },
+  "engines": {
+    "node": "4.0.0"
+  },
+  "keywords": [
+    "node",
+    "websocket",
+    "webrtc",
+    "ws"
+  ],
+  "author": "Shameem Reza",
+  "license": "MIT"
+}

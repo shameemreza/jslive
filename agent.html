@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>    
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="author" content="Shameem Reza">
+
+        <title>jsLive Agent Board</title>
+        <link rel="shortcut icon" href="favicon.ico">
+        <link rel="stylesheet" media="all" type="text/css" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css" />
+        <link rel="stylesheet" href="css/jquery-ui-timepicker-addon.css">
+        <link rel="stylesheet" href="css/agent.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript" src="//code.jquery.com/ui/1.11.0/jquery-ui.min.js"></script>
+        <script src="js/detect.js"></script>
+        <script src="js/datetimepicker.js"></script>
+    </head>
+
+
+    <body>
+
+        <div class="divGenerate">
+            Date: <input type="text" id="datetime" />
+            Duration <select name="duration" id="duration"><option value="">-</option><option value="15">15</option><option value="30">30</option><option value="45">45</option></select>
+            Agent Name: <input type="text" id="names" />
+            Visitor Name: <input type="text" id="visitorName" />
+            Room#: <input type="text" id="roomName" />
+            Password: <input type="text" id="roomPass" /><br/><br/>
+            <a href="#" id="saveLink" class="generateButton">Save Link</a>
+            
+            <a href="#" id="generateLink" class="generateButton">Generate Link</a>
+        </div>
+
+
+        <div id="visitors"></div>  
+
+        <div id="statusbar"></div>
+
+        <script>
+            var isAdmin = true;
+            var roomId = false;
+            var agentUrl, visitorUrl, sessionId;
+
+            jQuery(document).ready(function ($) {
+
+                var generateLink = function () {
+                    sessionId = Math.random().toString(36).slice(2).substring(0, 15);
+
+                    var str = {};
+                    if (lsRepUrl) {
+                        str.lsRepUrl = lsRepUrl;
+                    }
+                    if ($('#roomName').val()) {
+                        sessionId = $('#roomName').val();
+                    }
+                    if ($('#names').val()) {
+                        str.names = $('#names').val();
+                    }
+                    if ($('#visitorName').val()) {
+                        str.visitorName = $('#visitorName').val();
+                    }
+                    if ($('#datetime').val()) {
+                        str.datetime = $('#datetime').val();
+                    }
+                    if ($('#duration').val()) {
+                        str.duration = $('#duration').val();
+                    }
+                    var encodedString = window.btoa(JSON.stringify(str));
+                    visitorUrl = lsRepUrl + 'pages/room.html?room=' + sessionId + '&p=' + encodedString;
+                    var aux = document.createElement("input");
+                    aux.setAttribute("value", visitorUrl);
+                    document.body.appendChild(aux);
+                    aux.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(aux);
+                    if ($('#roomPass').val()) {
+                        str.pass = $('#roomPass').val();
+                    }
+                    delete str['visitorName'];
+                    encodedString = window.btoa(JSON.stringify(str));
+                    agentUrl = lsRepUrl + 'pages/room.html?room=' + sessionId + '&p=' + encodedString;
+                };
+
+                $('#saveLink').on('click', function () {
+                    generateLink();
+                    $.ajax({
+                        type: 'POST',
+                        url: lsRepUrl + '/server/script.php',
+                        data: {'type': 'scheduling', 'agent': $('#names').val(), 'agenturl': agentUrl, 'visitor': $('#visitorName').val(), 'visitorurl': visitorUrl, 'password': $('#roomPass').val(), 'session': sessionId, 'datetime': $('#datetime').val(), 'duration': $('#duration').val()}
+                    })
+                            .done(function (data) {
+                                if (data) {
+                                    alert('Successfully saved');
+                                } else {
+                                    alert('Saving failed');
+                                }
+                            })
+                            .fail(function () {
+                                console.log('failed');
+                            });
+                });
+
+                $('#generateLink').on('click', function () {
+                    generateLink();
+                    window.open(agentUrl + '&isAdmin=1');
+                });
+                
+                var d = new Date();
+                $('#datetime').datetimepicker({
+                    timeFormat: 'h:mm TT',
+                    stepHour: 1,
+                    stepMinute: 15,
+                    controlType: 'select',
+                    hourMin: 8,
+                    hourMax: 21,
+                    minDate: new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), 0),
+                    oneLine: true
+                });
+            });
+        </script>
+        <script src="js/loader.js" data-source_path="" ></script>
+    </body>
+</html>

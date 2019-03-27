@@ -1,0 +1,29 @@
+{
+    "name" : "jsLive Screen Capturing",
+    "author": "Shameem Reza",
+    "version" : "0.0.1",
+    "manifest_version" : 2,
+    "minimum_chrome_version": "34",
+    "description" : "Capture screen sharing on any HTTPs domain made for jsLive",
+    "homepage_url": "https://shameem.me",
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [ {
+       "js": [ "content.js" ],
+       "all_frames": true,
+       "run_at": "document_end",
+       "matches": ["https://*/*"]
+    }],
+    "icons": { "16": "icon16.png",
+           "48": "icon48.png",
+          "128": "icon128.png" },
+    "permissions": [
+        "desktopCapture",
+        "activeTab"
+    ],
+    "web_accessible_resources": [
+        "icon16.png"
+    ]
+}
